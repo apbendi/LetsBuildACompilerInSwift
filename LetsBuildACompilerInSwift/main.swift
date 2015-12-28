@@ -114,8 +114,36 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
-func term() {
+func factor() {
     emit("d0 = \(getNum())")
+}
+
+func multiply() {
+    match("*")
+    factor()
+    emit("d0 *= stack.removeLast()")
+}
+
+func divide() {
+    match("/")
+    factor()
+    emit("d1 = stack.removeLast()")
+    emit("d0 = d1 / d0")
+}
+
+func term() {
+    factor()
+    while look == "*" || look == "/" {
+        emit("stack.append(d0)")
+        switch look {
+        case "*":
+            multiply()
+        case "/":
+            divide()
+        default:
+            expected("MulOp")
+        }
+    }
 }
 
 func add() {
