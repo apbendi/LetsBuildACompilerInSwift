@@ -115,6 +115,13 @@ func emit(s: String) {
 }
 
 func factor() {
+    if look == "(" { // recursively build the expression inside this factor
+        match("(")
+        expression()
+        match(")")
+        return;
+    }
+
     emit("d0 = \(getNum())")
 }
 
