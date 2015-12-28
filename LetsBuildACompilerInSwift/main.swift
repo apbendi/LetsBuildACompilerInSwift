@@ -121,20 +121,20 @@ func term() {
 func add() {
     match("+")
     term()
-    emit("d0 += d1")
+    emit("d0 += stack.removeLast()")
 }
 
 func subtract() {
     match("-")
     term()
-    emit("d0 -= d1")
+    emit("d0 -= stack.removeLast()")
     emit("d0 = -d0")
 }
 
 func expression() {
     term()
     while look == "+" || look == "-" {
-        emit("d1 = d0")
+        emit("stack.append(d0)")
         switch look {
         case "+":
             add()
@@ -150,6 +150,7 @@ func start() {
     emit("// Compiler output")
     emit("var d0: Int")
     emit("var d1: Int")
+    emit("var stack: [Int] = []")
     getChar()
 }
 
