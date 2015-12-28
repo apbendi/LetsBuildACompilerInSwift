@@ -5,7 +5,7 @@ var look: Character!
 
 //Report an error
 func error(message: String) {
-    print(message)
+    print("Error: \(message)")
 }
 
 //Report error and halt
@@ -114,12 +114,40 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func term() {
+    emit("d0 = \(getNum())")
+}
+
+func add() {
+    match("+")
+    term()
+    emit("d0 += d1")
+}
+
+func subtract() {
+    match("-")
+    term()
+    emit("d0 -= d1")
+    emit("d0 = -d0")
+}
+
 func expression() {
-    emit("var d0 = \(getNum())")
+    term()
+    emit("d1 = d0")
+    switch look {
+    case "+":
+        add()
+    case "-":
+        subtract()
+    default:
+        expected("AddOp")
+    }
 }
 
 func start() {
-    print("// Start")
+    emit("// Compiler output")
+    emit("var d0: Int")
+    emit("var d1: Int")
     getChar()
 }
 
