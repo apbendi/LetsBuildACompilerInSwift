@@ -167,8 +167,15 @@ func subtract() {
 }
 
 func expression() {
-    term()
-    while look == "+" || look == "-" {
+    // This expression has a leading +/- so we "clear" our initial value
+    // Note we could initialize the var d0 with 0 and clean this up, but we'll follow along
+    if isAddop(look) {
+        emit("d0 = 0")
+    } else {
+        term()
+    }
+
+    while isAddop(look) {
         emit("stack.append(d0)")
         switch look {
         case "+":
