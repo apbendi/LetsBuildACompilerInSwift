@@ -133,14 +133,16 @@ func subtract() {
 
 func expression() {
     term()
-    emit("d1 = d0")
-    switch look {
-    case "+":
-        add()
-    case "-":
-        subtract()
-    default:
-        expected("AddOp")
+    while look == "+" || look == "-" {
+        emit("d1 = d0")
+        switch look {
+        case "+":
+            add()
+        case "-":
+            subtract()
+        default:
+            expected("AddOp")
+        }
     }
 }
 
