@@ -17,9 +17,14 @@ func fail(message: String) {
 //Read new character from input stream
 func getChar() {
     struct Static { static var index = 0 }
+
     let i = inputBuffer.startIndex.advancedBy(Static.index)
+    guard i != inputBuffer.endIndex else {
+        return
+    }
+
     Static.index += 1
-    look = inputBuffer[i]
+    look = inputBuffer.characters[i]
 }
 
 //Report what was expected and halt
@@ -109,6 +114,10 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func expression() {
+    emit("var d0 = \(getNum())")
+}
+
 func start() {
     print("// Start")
     getChar()
@@ -116,3 +125,4 @@ func start() {
 
 // MARK: Main
 start()
+expression()
