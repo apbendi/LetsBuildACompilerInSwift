@@ -20,6 +20,7 @@ func getChar() {
 
     let i = inputBuffer.startIndex.advancedBy(Static.index)
     guard i != inputBuffer.endIndex else {
+        look = "\n"
         return
     }
 
@@ -34,11 +35,13 @@ func expected(thing: String) {
 
 // Match a specific input character
 func match(c: Character) {
-    if look == c {
-        getChar()
-    } else {
+    if look != c {
         expected("'\(c)'")
+        return
     }
+
+    getChar()
+    skipWhite()
 }
 
 //Recognize an Alpha character
@@ -100,6 +103,7 @@ func getName() -> String {
         getChar()
     }
 
+    skipWhite()
     return token
 }
 
@@ -117,6 +121,7 @@ func getNum() -> String {
         getChar()
     }
 
+    skipWhite()
     return value
 }
 
@@ -227,6 +232,7 @@ func start() {
     emit("typealias voidFn = (()->())")
     emit("var functions = [String:voidFn]()")
     getChar()
+    skipWhite()
 }
 
 // MARK: Main
