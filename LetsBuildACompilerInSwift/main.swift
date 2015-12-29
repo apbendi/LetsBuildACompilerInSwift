@@ -86,27 +86,38 @@ func isAddop(c: Character) -> Bool {
 }
 
 //Get an identifier
-func getName() -> Character {
+func getName() -> String {
     guard isAlpha(look) else {
         expected("Name")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let upper = String(look).capitalizedString.characters.first!
-    getChar()
-    return upper
+    var token = ""
+
+    while isAlNum(look) {
+        let upper = String(look).capitalizedString.characters.first!
+        token = "\(token)\(upper)"
+        getChar()
+    }
+
+    return token
 }
 
 //Get a number
-func getNum() -> Character {
+func getNum() -> String {
     guard isDigit(look) else {
         expected("Integer")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let num = look
-    getChar()
-    return num
+    var value = ""
+
+    while isDigit(look) {
+        value = "\(value)\(look)"
+        getChar()
+    }
+
+    return value
 }
 
 //Output a string with a leading tab
