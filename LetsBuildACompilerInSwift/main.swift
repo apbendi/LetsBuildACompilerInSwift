@@ -120,7 +120,7 @@ func factor() {
         expression()
         match(")")
     } else if isAlpha(look) {
-        emit("d0 = variables[\(look)]")
+        ident()
     } else {
         emit("d0 = \(getNum())")
     }
@@ -167,6 +167,17 @@ func subtract() {
     emit("d0 = -d0")
 }
 
+func ident() {
+    let name = getName()
+    if look == "(" {
+        match("(")
+        match(")")
+        emit("functions[\"\(name)\"]!()")
+    } else {
+        emit("variables[\"\(name)\"]")
+    }
+}
+
 func expression() {
     // This expression has a leading +/- so we "clear" our initial value
     // Note we could initialize the var d0 with 0 and clean this up, but we'll follow along
@@ -195,6 +206,8 @@ func start() {
     emit("var d1: Int")
     emit("var stack = [Int]()")
     emit("var variables = [String:Int]()")
+    emit("typealias voidFn = (()->())")
+    emit("var functions = [String:voidFn]()")
     getChar()
 }
 
