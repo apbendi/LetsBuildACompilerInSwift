@@ -200,6 +200,13 @@ func expression() {
     }
 }
 
+func assignment() {
+    let name = getName()
+    match("=")
+    expression()
+    emit("variables[\"\(name)\"] = d0")
+}
+
 func start() {
     emit("// Compiler output")
     emit("var d0: Int")
@@ -213,8 +220,4 @@ func start() {
 
 // MARK: Main
 start()
-expression()
-
-if look != "\n" {
-    expected("Terminating Newline")
-}
+assignment()
