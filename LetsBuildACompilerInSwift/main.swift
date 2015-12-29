@@ -214,3 +214,7 @@ func start() {
 // MARK: Main
 start()
 expression()
+
+if look != "\n" {
+    expected("Terminating Newline")
+}
