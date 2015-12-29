@@ -119,10 +119,11 @@ func factor() {
         match("(")
         expression()
         match(")")
-        return;
+    } else if isAlpha(look) {
+        emit("d0 = variables[\(look)]")
+    } else {
+        emit("d0 = \(getNum())")
     }
-
-    emit("d0 = \(getNum())")
 }
 
 func multiply() {
@@ -192,7 +193,8 @@ func start() {
     emit("// Compiler output")
     emit("var d0: Int")
     emit("var d1: Int")
-    emit("var stack: [Int] = []")
+    emit("var stack = [Int]()")
+    emit("var variables = [String:Int]()")
     getChar()
 }
 
