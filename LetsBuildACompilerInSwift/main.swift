@@ -125,6 +125,12 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func assignment() {
+    let name = getName()
+    match("=")
+    table[name] = expression()
+}
+
 func factor() -> Int {
     var value: Int
 
@@ -133,7 +139,7 @@ func factor() -> Int {
         value = expression()
         match(")")
     } else if isAlpha(look) {
-        guard let varValue = variables[getName()] else {
+        guard let varValue = table[getName()] else {
             print("FATAL ERROR: Illegal variable \(getName())")
             exit(-1)
         }
@@ -198,10 +204,11 @@ func start() {
 
 // MARK: Main
 
-var variables = [Character:Int]() // Initialize a variables hash with each var as 0
+var table = [Character:Int]() // Initialize a variables hash with each var as 0
 for aLetter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters {
-    variables[aLetter] = 0
+    table[aLetter] = 0
 }
 
 start()
-print(expression())
+assignment()
+print(table["A"]!)
