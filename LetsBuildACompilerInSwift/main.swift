@@ -214,6 +214,30 @@ func assignment() {
     table[name] = expression()
 }
 
+func input() {
+    match("?")
+
+    guard let userIn = readLine(),
+        userNum = Int(userIn) else {
+
+        print("Invalid input: Integers only")
+        exit(-1)
+    }
+
+    table[getName()] = userNum
+}
+
+func output() {
+    match("!")
+
+    guard let varValue = table[getName()] else {
+        print("Attempted to print illegal value: \(getName())")
+        exit(-1)
+    }
+
+    print(varValue)
+}
+
 func start() {
     getChar()
 }
@@ -228,8 +252,15 @@ for aLetter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters {
 start()
 
 while look != "." {
-    assignment()
+    switch look {
+    case "?":
+        input()
+    case "!":
+        output()
+    default:
+        assignment()
+    }
+
     newLine()
 }
 
-print(table)
