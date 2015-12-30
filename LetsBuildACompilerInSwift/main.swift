@@ -132,6 +132,13 @@ func factor() -> Int {
         match("(")
         value = expression()
         match(")")
+    } else if isAlpha(look) {
+        guard let varValue = variables[getName()] else {
+            print("FATAL ERROR: Illegal variable \(getName())")
+            exit(-1)
+        }
+
+        value = varValue
     } else {
         value = getNum()
     }
@@ -190,5 +197,11 @@ func start() {
 }
 
 // MARK: Main
+
+var variables = [Character:Int]() // Initialize a variables hash with each var as 0
+for aLetter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters {
+    variables[aLetter] = 0
+}
+
 start()
 print(expression())
