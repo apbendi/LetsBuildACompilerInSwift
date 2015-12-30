@@ -119,7 +119,29 @@ func emit(s: String) {
 }
 
 func expression() -> Int {
-    return getNum()
+    var value: Int = 0
+
+    if isAddop(look) {
+        // initialized to 0
+    } else {
+        value = getNum()
+    }
+
+    while isAddop(look) {
+        switch look {
+        case "+":
+            match("+")
+            value += getNum()
+        case "-":
+            match("-")
+            value -= getNum()
+        default:
+            print("FATAL ERROR: \(look) passed isAddop but didn't match")
+            exit(-1)
+        }
+    }
+
+    return value
 }
 
 func start() {
