@@ -98,13 +98,17 @@ func getName() -> Character {
 }
 
 //Get a number
-func getNum() -> Character {
+func getNum() -> Int {
     guard isDigit(look) else {
         expected("Integer")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let num = look
+    guard let num = Int("\(look)") else {
+        print("FATAL ERROR: \(look) passed isDigit but did not conver to Int")
+        exit(-1)
+    }
+
     getChar()
     return num
 }
@@ -114,9 +118,14 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func expression() -> Int {
+    return getNum()
+}
+
 func start() {
     getChar()
 }
 
 // MARK: Main
 start()
+print(expression())
