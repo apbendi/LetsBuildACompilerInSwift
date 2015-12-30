@@ -20,6 +20,7 @@ func getChar() {
 
     let i = inputBuffer.startIndex.advancedBy(Static.index)
     guard i != inputBuffer.endIndex else {
+        look = "\n"
         return
     }
 
@@ -104,13 +105,19 @@ func getNum() -> Int {
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    guard let num = Int("\(look)") else {
-        print("FATAL ERROR: \(look) passed isDigit but did not convert to Int")
-        exit(-1)
+    var value: Int = 0
+
+    while isDigit(look) {
+        guard let digit = Int("\(look)") else {
+            print("FATAL ERROR: \(look) passed isDigit but did not convert to Int")
+            exit(-1)
+        }
+
+        value = 10 * value + digit
+        getChar()
     }
 
-    getChar()
-    return num
+    return value
 }
 
 //Output a string with a leading tab
