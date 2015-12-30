@@ -1,6 +1,15 @@
 import Foundation
 
-var inputBuffer: String! = readLine()
+var line: String! = readLine()
+var inputBuffer = ""
+
+while line.characters.first != "." {
+    inputBuffer.appendContentsOf("\(line)\n")
+    line = readLine()
+}
+
+inputBuffer.appendContentsOf(".")
+
 var look: Character!
 
 //Report an error
@@ -39,6 +48,13 @@ func match(c: Character) {
         getChar()
     } else {
         expected("'\(c)'")
+    }
+}
+
+// Skip a newline
+func newLine() {
+    if look == "\n" {
+        getChar()
     }
 }
 
@@ -125,12 +141,6 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
-func assignment() {
-    let name = getName()
-    match("=")
-    table[name] = expression()
-}
-
 func factor() -> Int {
     var value: Int
 
@@ -198,6 +208,12 @@ func expression() -> Int {
     return value
 }
 
+func assignment() {
+    let name = getName()
+    match("=")
+    table[name] = expression()
+}
+
 func start() {
     getChar()
 }
@@ -210,5 +226,10 @@ for aLetter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters {
 }
 
 start()
-assignment()
-print(table["A"]!)
+
+while look != "." {
+    assignment()
+    newLine()
+}
+
+print(table)
