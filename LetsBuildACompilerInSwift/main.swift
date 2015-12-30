@@ -125,17 +125,31 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func factor() -> Int {
+    var value: Int
+
+    if look == "(" {
+        match("(")
+        value = expression()
+        match(")")
+    } else {
+        value = getNum()
+    }
+
+    return value
+}
+
 func term() -> Int {
-    var value = getNum()
+    var value = factor()
 
     while look == "*" || look == "/" {
         switch look {
         case "*":
             match("*")
-            value *= getNum()
+            value *= factor()
         case "/":
             match("/")
-            value = value / getNum()
+            value = value / factor()
         default:
             print("FATAL ERROR: \(look) appeared to be mulop but did not match")
             exit(-1)
