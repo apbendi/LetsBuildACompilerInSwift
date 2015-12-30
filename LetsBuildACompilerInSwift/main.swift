@@ -105,7 +105,7 @@ func getNum() -> Int {
     }
 
     guard let num = Int("\(look)") else {
-        print("FATAL ERROR: \(look) passed isDigit but did not conver to Int")
+        print("FATAL ERROR: \(look) passed isDigit but did not convert to Int")
         exit(-1)
     }
 
@@ -118,23 +118,43 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func term() -> Int {
+    var value = getNum()
+
+    while look == "*" || look == "/" {
+        switch look {
+        case "*":
+            match("*")
+            value *= getNum()
+        case "/":
+            match("/")
+            value = value / getNum()
+        default:
+            print("FATAL ERROR: \(look) appeared to be mulop but did not match")
+            exit(-1)
+        }
+    }
+
+    return value
+}
+
 func expression() -> Int {
     var value: Int = 0
 
     if isAddop(look) {
         // initialized to 0
     } else {
-        value = getNum()
+        value = term()
     }
 
     while isAddop(look) {
         switch look {
         case "+":
             match("+")
-            value += getNum()
+            value += term()
         case "-":
             match("-")
-            value -= getNum()
+            value -= term()
         default:
             print("FATAL ERROR: \(look) passed isAddop but didn't match")
             exit(-1)
