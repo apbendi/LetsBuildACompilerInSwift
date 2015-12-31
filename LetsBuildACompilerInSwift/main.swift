@@ -128,6 +128,11 @@ func expression() {
     emit("<expression>", newLine: false)
 }
 
+func doBreak() {
+    match("b")
+    emit("break")
+}
+
 func doDo() {
     match("d")
     emit("for _ in 0..<", newLine: false)
@@ -217,6 +222,8 @@ func block() {
             doFor()
         case "d":
             doDo()
+        case "b":
+            doBreak()
         default:
             other()
         }
