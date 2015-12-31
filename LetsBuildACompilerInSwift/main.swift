@@ -124,6 +124,14 @@ func condition() {
     emit("<condition>", newLine: false)
 }
 
+func doLoop() {
+    match("p")
+    emit("while true {")
+    block()
+    match("e")
+    emit("}")
+}
+
 func doWhile() {
     match("w")
     emit("while ", newLine: false)
@@ -163,6 +171,8 @@ func block() {
             doElse()
         case "w":
             doWhile()
+        case "p":
+            doLoop()
         default:
             other()
         }
