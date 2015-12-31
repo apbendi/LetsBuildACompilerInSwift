@@ -124,6 +124,25 @@ func condition() {
     emit("<condition>", newLine: false)
 }
 
+func expression() {
+    emit("<expression>", newLine: false)
+}
+
+func doFor() {
+    match("f")
+    let name = getName()
+    emit("for \(name) in ", newLine: false)
+    match("=")
+    expression()
+    match("t")
+    emit("...", newLine: false)
+    expression()
+    emit(" {")
+    block()
+    match("e")
+    emit("}")
+}
+
 func doRepeat() {
     match("r")
     emit("repeat {")
@@ -172,7 +191,7 @@ func other() {
 }
 
 func block() {
-    while look != "e" && look != "u" {
+    while look != "e" && look != "u" && look != "t" {
         switch look {
         case "i":
             doIf()
@@ -184,6 +203,8 @@ func block() {
             doLoop()
         case "r":
             doRepeat()
+        case "f":
+            doFor()
         default:
             other()
         }
