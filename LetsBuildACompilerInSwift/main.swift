@@ -130,6 +130,11 @@ func doIf() {
     condition()
     emit(" {")
     block()
+    if look == "l" {
+        match("l")
+        emit("} else {")
+        block()
+    }
     match("e")
     emit("}")
 }
@@ -143,6 +148,8 @@ func block() {
         switch look {
         case "i":
             doIf()
+        case "l":
+            return
         default:
             other()
         }
