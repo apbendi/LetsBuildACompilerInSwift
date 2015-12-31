@@ -124,17 +124,18 @@ func condition() {
     emit("<condition>", newLine: false)
 }
 
+func doElse() {
+    match("l")
+    emit("} else {")
+    block()
+}
+
 func doIf() {
     match("i")
     emit("if ", newLine: false)
     condition()
     emit(" {")
     block()
-    if look == "l" {
-        match("l")
-        emit("} else {")
-        block()
-    }
     match("e")
     emit("}")
 }
@@ -149,7 +150,7 @@ func block() {
         case "i":
             doIf()
         case "l":
-            return
+            doElse()
         default:
             other()
         }
@@ -163,7 +164,7 @@ func doProgram() {
         expected("END")
     }
 
-    emit("END")
+    emit("// END")
 }
 
 func start() {
