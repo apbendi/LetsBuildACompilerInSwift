@@ -114,9 +114,14 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func other() {
+    emit("\(getName())")
+}
+
 func start() {
     getChar()
 }
 
 // MARK: Main
 start()
+other()
