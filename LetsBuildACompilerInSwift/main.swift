@@ -110,8 +110,28 @@ func getNum() -> Character {
 }
 
 //Output a string with a leading tab
-func emit(s: String) {
-    print("\t\(s)")
+func emit(s: String, newLine: Bool = true) {
+    var terminator = "\n"
+
+    if !newLine {
+        terminator = ""
+    }
+
+    print("\t\(s)", terminator: terminator)
+}
+
+func condition() {
+    emit("<condition>", newLine: false)
+}
+
+func doIf() {
+    match("i")
+    emit("if ", newLine: false)
+    condition()
+    emit(" {")
+    block()
+    match("e")
+    emit("}")
 }
 
 func other() {
@@ -120,7 +140,12 @@ func other() {
 
 func block() {
     while look != "e" {
-        other()
+        switch look {
+        case "i":
+            doIf()
+        default:
+            other()
+        }
     }
 }
 
