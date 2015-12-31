@@ -124,6 +124,15 @@ func condition() {
     emit("<condition>", newLine: false)
 }
 
+func doRepeat() {
+    match("r")
+    emit("repeat {")
+    block()
+    match("u")
+    emit("} while ", newLine: false)
+    condition()
+}
+
 func doLoop() {
     match("p")
     emit("while true {")
@@ -163,7 +172,7 @@ func other() {
 }
 
 func block() {
-    while look != "e" {
+    while look != "e" && look != "u" {
         switch look {
         case "i":
             doIf()
@@ -173,6 +182,8 @@ func block() {
             doWhile()
         case "p":
             doLoop()
+        case "r":
+            doRepeat()
         default:
             other()
         }
