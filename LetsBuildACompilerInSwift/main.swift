@@ -128,6 +128,16 @@ func expression() {
     emit("<expression>", newLine: false)
 }
 
+func doDo() {
+    match("d")
+    emit("for _ in 0..<", newLine: false)
+    expression()
+    emit(" { ")
+    block()
+    match("e")
+    emit("}")
+}
+
 func doFor() {
     match("f")
     let name = getName()
@@ -205,6 +215,8 @@ func block() {
             doRepeat()
         case "f":
             doFor()
+        case "d":
+            doDo()
         default:
             other()
         }
