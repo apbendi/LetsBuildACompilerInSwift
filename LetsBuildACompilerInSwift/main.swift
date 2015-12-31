@@ -118,10 +118,26 @@ func other() {
     emit("\(getName())")
 }
 
+func block() {
+    while look != "e" {
+        other()
+    }
+}
+
+func doProgram() {
+    block()
+
+    if look != "e" {
+        expected("END")
+    }
+
+    emit("END")
+}
+
 func start() {
     getChar()
 }
 
 // MARK: Main
 start()
-other()
+doProgram()
