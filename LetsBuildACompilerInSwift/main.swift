@@ -124,6 +124,16 @@ func condition() {
     emit("<condition>", newLine: false)
 }
 
+func doWhile() {
+    match("w")
+    emit("while ", newLine: false)
+    condition()
+    emit(" {")
+    block()
+    match("e")
+    emit("}")
+}
+
 func doElse() {
     match("l")
     emit("} else {")
@@ -151,6 +161,8 @@ func block() {
             doIf()
         case "l":
             doElse()
+        case "w":
+            doWhile()
         default:
             other()
         }
