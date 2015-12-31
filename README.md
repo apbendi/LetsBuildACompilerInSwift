@@ -47,6 +47,18 @@ in case you want to follow along.
  * [Part 4](https://github.com/apbendi/LetsBuildACompilerInSwift/tree/part4) is another detour,
  in which Crenshaw has us start with a fresh cradle and implement an *interpreter* rather than a compiler.
  This helps us understand the difference between the two.
+ * In [Part 5](https://github.com/apbendi/LetsBuildACompilerInSwift/tree/part5)
+ Crenshaw is laying the groundwork for control flow before we've implemented a boolean type. This is a
+ chicken/egg situation. As such, the section feels a little weird because we can't generate any actual
+ executable code, but must rely on placeholders for conditions and expressions.
+ Additionally, my choice to emit Swift, rather than assembly, causes our implementation to
+ depart a bit from Crenshaw. Assembly languages use branch statements that aren't easily "emulated" in Swift.
+ If we were emitting C, we could have used `label` and `if(condition) goto label;` statements to mimic the assembly.
+ This would have kept our implementation more parallel to the series. Swift doesn't have `label` or `goto`
+ statements (not complaining!); instead we translate the grammar into equivalent Swift control constructs.
+ This actually makes our implementation significantly simpler than Crenshaw's in certain places, as we avoid label counters and
+ passing around label statements. There is still a lot to be learned by working through this section, even though it departs from
+ the tutorial, but suffice it to say it would be a bit different if we were emitting C or Assembly.
 
 ### Future
 
