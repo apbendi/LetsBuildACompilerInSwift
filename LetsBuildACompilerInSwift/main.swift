@@ -73,6 +73,10 @@ func isWhite(c: Character) -> Bool {
     return " " == c || "\t" == c
 }
 
+func isBoolean(c: Character) -> Bool {
+    return "t" == c || "T" == c || "f" == c || "F" == c
+}
+
 //Skip leading white space
 func skipWhite() {
     while isWhite(look) {
@@ -109,6 +113,17 @@ func getNum() -> Character {
     return num
 }
 
+func getBoolean() -> Bool {
+    guard isBoolean(look) else {
+        expected("Boolean Literal")
+        exit(-1)
+    }
+
+    let boolC = String(look).capitalizedString.characters.first!
+    getChar()
+    return boolC == "T"
+}
+
 //Output a string with a leading tab
 func emit(s: String) {
     print("\t\(s)")
@@ -120,3 +135,4 @@ func start() {
 
 // MARK: Main
 start()
+print(getBoolean())
