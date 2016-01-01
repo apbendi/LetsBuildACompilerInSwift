@@ -141,6 +141,26 @@ func boolXor() {
 }
 
 func boolTerm() {
+    notFactor()
+    while look == "&" {
+        emit("stack.append(d0)")
+        match("&")
+        notFactor()
+        emit("d0 = d0 == -1 && stack.removeLast() == -1 ? -1 : 0")
+    }
+}
+
+func notFactor() {
+    if look == "!" {
+        match("!")
+        boolFactor()
+        emit("d0 = d0 == -1 ? 0 : -1")
+    } else {
+        boolFactor()
+    }
+}
+
+func boolFactor() {
     guard isBoolean(look) else {
         expected("Boolean Literal")
         exit(-1)
