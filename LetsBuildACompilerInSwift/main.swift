@@ -93,6 +93,10 @@ func isOrop(c: Character) -> Bool {
     return "|" == c || "~" == c
 }
 
+func isRelop(c: Character) -> Bool {
+    return "=" == c || "#" == c || "<" == c || ">" == c
+}
+
 //Get an identifier
 func getName() -> Character {
     guard isAlpha(look) else {
@@ -117,6 +121,80 @@ func getNum() -> Character {
     return num
 }
 
+func factor() {
+    if look == "(" { // recursively build the expression inside this factor
+        match("(")
+        expression()
+        match(")")
+        return;
+    }
+
+    emit("d0 = \(getNum())")
+}
+
+func multiply() {
+    match("*")
+    factor()
+    emit("d0 *= stack.removeLast()")
+}
+
+func divide() {
+    match("/")
+    factor()
+    emit("d1 = stack.removeLast()")
+    emit("d0 = d1 / d0")
+}
+
+func term() {
+    factor()
+    while look == "*" || look == "/" {
+        emit("stack.append(d0)")
+        switch look {
+        case "*":
+            multiply()
+        case "/":
+            divide()
+        default:
+            expected("MulOp")
+        }
+    }
+}
+
+func add() {
+    match("+")
+    term()
+    emit("d0 += stack.removeLast()")
+}
+
+func subtract() {
+    match("-")
+    term()
+    emit("d0 -= stack.removeLast()")
+    emit("d0 = -d0")
+}
+
+func expression() {
+    // This expression has a leading +/- so we "clear" our initial value
+    // Note we could initialize the var d0 with 0 and clean this up, but we'll follow along
+    if isAddop(look) {
+        emit("d0 = 0")
+    } else {
+        term()
+    }
+
+    while isAddop(look) {
+        emit("stack.append(d0)")
+        switch look {
+        case "+":
+            add()
+        case "-":
+            subtract()
+        default:
+            expected("AddOp")
+        }
+    }
+}
+
 func getBoolean() -> Bool {
     guard isBoolean(look) else {
         expected("Boolean Literal")
@@ -126,6 +204,30 @@ func getBoolean() -> Bool {
     let boolC = String(look).capitalizedString.characters.first!
     getChar()
     return boolC == "T"
+}
+
+func equals() {
+    match("=")
+    expression()
+    emit("d0 = d0 == stack.removeLast() ? -1 : 0")
+}
+
+func notEquals() {
+    match("#")
+    expression()
+    emit("d0 = d0 != stack.removeLast() ? -1 : 0")
+}
+
+func less() {
+    match("<")
+    expression()
+    emit("d0 = stack.removeLast() < d0 ? -1 : 0")
+}
+
+func greater() {
+    match(">")
+    expression()
+    emit("d0 = stack.removeLast() > d0 ? -1 : 0")
 }
 
 func boolOr() {
@@ -161,15 +263,14 @@ func notFactor() {
 }
 
 func boolFactor() {
-    guard isBoolean(look) else {
-        expected("Boolean Literal")
-        exit(-1)
-    }
-
-    if getBoolean() {
-        emit("d0 = -1")
+    if isBoolean(look) {
+        if getBoolean() {
+            emit("d0 = -1")
+        } else {
+            emit("d0 = 0")
+        }
     } else {
-        emit("d0 = 0")
+        relation()
     }
 }
 
@@ -182,6 +283,26 @@ func boolExpression() {
             boolOr()
         case "~":
             boolXor()
+        default:
+            break
+        }
+    }
+}
+
+func relation() {
+    expression()
+
+    if isRelop(look) {
+        emit("stack.append(d0)")
+        switch look {
+        case "=":
+            equals()
+        case "#":
+            notEquals()
+        case "<":
+            less()
+        case ">":
+            greater()
         default:
             break
         }
