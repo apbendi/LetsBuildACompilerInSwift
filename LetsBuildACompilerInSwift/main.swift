@@ -89,6 +89,10 @@ func isAddop(c: Character) -> Bool {
     return "+" == c || "-" == c
 }
 
+func isOrop(c: Character) -> Bool {
+    return "|" == c || "~" == c
+}
+
 //Get an identifier
 func getName() -> Character {
     guard isAlpha(look) else {
@@ -124,7 +128,19 @@ func getBoolean() -> Bool {
     return boolC == "T"
 }
 
-func boolExpression() {
+func boolOr() {
+    match("|")
+    boolTerm()
+    emit("d0 = d0 == -1 || stack.removeLast() == -1 ? -1 : 0")
+}
+
+func boolXor() {
+    match("~")
+    boolTerm()
+    emit("d0 = d0 != stack.removeLast() ? -1 : 0")
+}
+
+func boolTerm() {
     guard isBoolean(look) else {
         expected("Boolean Literal")
         exit(-1)
@@ -137,6 +153,21 @@ func boolExpression() {
     }
 }
 
+func boolExpression() {
+    boolTerm()
+    while isOrop(look) {
+        emit("stack.append(d0)")
+        switch look {
+        case "|":
+            boolOr()
+        case "~":
+            boolXor()
+        default:
+            break
+        }
+    }
+}
+
 //Output a string with a leading tab
 func emit(s: String) {
     print("\t\(s)")
@@ -145,6 +176,7 @@ func emit(s: String) {
 func start() {
     emit("// Compiler Output")
     emit("var d0: Int = 0")
+    emit("var stack = [Int]()")
     getChar()
 }
 
