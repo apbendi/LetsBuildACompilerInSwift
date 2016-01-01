@@ -124,15 +124,30 @@ func getBoolean() -> Bool {
     return boolC == "T"
 }
 
+func boolExpression() {
+    guard isBoolean(look) else {
+        expected("Boolean Literal")
+        exit(-1)
+    }
+
+    if getBoolean() {
+        emit("d0 = -1")
+    } else {
+        emit("d0 = 0")
+    }
+}
+
 //Output a string with a leading tab
 func emit(s: String) {
     print("\t\(s)")
 }
 
 func start() {
+    emit("// Compiler Output")
+    emit("var d0: Int = 0")
     getChar()
 }
 
 // MARK: Main
 start()
-print(getBoolean())
+print(boolExpression())
