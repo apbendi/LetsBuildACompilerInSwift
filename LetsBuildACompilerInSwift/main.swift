@@ -358,6 +358,7 @@ func doFor() {
     match("t")
     expression()
     emit("for \(name) in d1...d0 {")
+    emit("variables[\"\(name)\"] = \(name)")
     block()
     match("e")
     emit("}")
