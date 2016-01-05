@@ -350,14 +350,14 @@ func doFor() {
     emit("}")
 }
 
-func doRepeat() {
-    match("r")
-    emit("repeat {")
-    block()
-    match("u")
-    emit("} while ", newLine: false)
-    boolExpression()
-}
+//func doRepeat() {
+//    match("r")
+//    emit("repeat {")
+//    block()
+//    match("u")
+//    emit("} while ", newLine: false)
+//    boolExpression()
+//}
 
 func doLoop() {
     match("p")
@@ -406,8 +406,8 @@ func block() {
             doWhile()
         case "p":
             doLoop()
-        case "r":
-            doRepeat()
+//        case "r":
+//            doRepeat()
         case "f":
             doFor()
         case "d":
