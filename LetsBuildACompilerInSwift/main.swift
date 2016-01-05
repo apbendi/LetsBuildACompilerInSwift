@@ -328,8 +328,8 @@ func doBreak() {
 
 func doDo() {
     match("d")
-    emit("for _ in 0..<", newLine: false)
     expression()
+    emit("for _ in 0..<d0")
     emit(" { ")
     block()
     match("e")
