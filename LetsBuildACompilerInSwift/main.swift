@@ -1,6 +1,13 @@
 import Foundation
 
-var inputBuffer: String! = readLine()
+var line: String! = readLine()
+var inputBuffer = ""
+
+while line.characters.first != "." {
+    inputBuffer.appendContentsOf("\(line)\n")
+    line = readLine()
+}
+
 var look: Character!
 
 //Report an error
@@ -399,8 +406,15 @@ func other() {
     emit("print(\"\(getName())\")")
 }
 
+func fin() {
+    if look == "\n" {
+        getChar()
+    }
+}
+
 func block() {
     while look != "e" && look != "u" && look != "t" {
+        fin()
         switch look {
         case "i":
             doIf()
@@ -421,6 +435,7 @@ func block() {
         default:
             other()
         }
+        fin()
     }
 }
 
