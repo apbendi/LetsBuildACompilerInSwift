@@ -63,6 +63,13 @@ in case you want to follow along.
  we've built a parser that can handle Boolean expressions and incorporated our arithmetic expressions as well. Note that we again
  follow as closely to Crenshaw as possible while emitting Swift. This means that we're emitting `-1` for `true` and `0` as `false`
  the way he does in his 68K assembly.
+ * At the [end of Part 6](https://github.com/apbendi/LetsBuildACompilerInSwift/tree/part6-2) we've built a pretty impressive
+ parser. It can handle multi line programs, assignment statements, integer and boolean arithmetic, and control flow. You'll note
+ that when integrating control flow with real boolean types, our previously discussed divergence from Crenshaw, due to the fact
+ we're emitting Swift and not assembly, rears its head again. I was able to get most control statements working, but our 
+ almost-but-not-really "emulation" of Crenshaw's assembly does cause some differences and issues. In particular, I don't have
+ `while` (or `repeat`-`until`) working properly. Still, our little 'language' is pretty functional and we're mapping close to the
+ series.
 
 ### Future
 
