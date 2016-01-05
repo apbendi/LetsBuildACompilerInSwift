@@ -408,8 +408,11 @@ func doIf() {
     emit("}")
 }
 
-func other() {
-    emit("print(\"\(getName())\")")
+func assignmet() {
+    let name = getName()
+    match("=")
+    boolExpression()
+    emit("variables[\"\(name)\"] = d0")
 }
 
 func fin() {
@@ -439,7 +442,7 @@ func block() {
         case "b":
             doBreak()
         default:
-            other()
+            assignmet()
         }
         fin()
     }
