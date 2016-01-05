@@ -396,7 +396,7 @@ func doIf() {
 }
 
 func other() {
-    emit("\(getName())")
+    emit("print(\"\(getName())\")")
 }
 
 func block() {
@@ -435,6 +435,10 @@ func doProgram() {
 }
 
 func start() {
+    emit("// Compiler Output")
+    emit("var d0: Int = 0")
+    emit("var d1: Int = 0")
+    emit("var stack = [Int]()")
     getChar()
 }
 
