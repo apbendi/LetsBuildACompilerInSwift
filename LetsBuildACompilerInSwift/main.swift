@@ -133,9 +133,15 @@ func factor() {
         expression()
         match(")")
         return;
+    } else if isAlpha(look) {
+        emit("if let varVal = variables[\"\(getName())\"] {")
+        emit("d0 = varVal")
+        emit("} else { ")
+        emit("d0 = 0")
+        emit("}")
+    } else {
+        emit("d0 = \(getNum())")
     }
-
-    emit("d0 = \(getNum())")
 }
 
 func multiply() {
@@ -454,6 +460,7 @@ func start() {
     emit("var d0: Int = 0")
     emit("var d1: Int = 0")
     emit("var stack = [Int]()")
+    emit("var variables = [String:Int]()")
     getChar()
 }
 
