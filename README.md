@@ -59,6 +59,10 @@ in case you want to follow along.
  This actually makes our implementation significantly simpler than Crenshaw's in certain places, as we avoid label counters and
  passing around label statements. There is still a lot to be learned by working through this section, even though it departs from
  the tutorial, but suffice it to say it would be a bit different if we were emitting C or Assembly.
+ * By the [middle of Part 6](https://github.com/apbendi/LetsBuildACompilerInSwift/commit/1a72a3e47713d6eb74629ba39e87592e024b951b)
+ we've built a parser that can handle Boolean expressions and incorporated our arithmetic expressions as well. Note that we again
+ follow as closely to Crenshaw as possible while emitting Swift. This means that we're emitting `-1` for `true` and `0` as `false`
+ the way he does in his 68K assembly.
 
 ### Future
 
