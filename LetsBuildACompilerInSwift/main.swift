@@ -323,4 +323,4 @@ func start() {
 
 // MARK: Main
 start()
-print(boolExpression())
+boolExpression()
