@@ -367,6 +367,10 @@ func doLoop() {
     emit("}")
 }
 
+// This technically doesn't work right, because the 
+// contents of block (were we actually supporting real
+// statements inside the block) could overwrite d0. I'm
+// not exactly sure how to fix it right now, though.
 func doWhile() {
     match("w")
     boolExpression()
