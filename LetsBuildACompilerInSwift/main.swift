@@ -370,9 +370,8 @@ func doLoop() {
 
 func doWhile() {
     match("w")
-    emit("while ", newLine: false)
     boolExpression()
-    emit(" {")
+    emit("while d0 == -1 {")
     block()
     match("e")
     emit("}")
