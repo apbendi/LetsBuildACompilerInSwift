@@ -90,6 +90,18 @@ func skipWhite() {
     }
 }
 
+func isOp(c: Character) -> Bool {
+    let ops: [Character] = ["+", "-", "*", "/", "<", ">", ":", "="]
+
+    for op in ops {
+        if c == op {
+            return true
+        }
+    }
+
+    return false
+}
+
 //Recognize an Addop
 func isAddop(c: Character) -> Bool {
     return "+" == c || "-" == c
@@ -132,6 +144,23 @@ func getNum() -> String {
     return num
 }
 
+func getOp() -> String {
+    guard isOp(look)else {
+        expected("Operator")
+        exit(-1)
+    }
+
+    var op = ""
+
+    while isOp(look) {
+        op = "\(op)\(look)"
+        getChar()
+    }
+
+    skipWhite()
+    return op
+}
+
 func fin() {
     if look == "\n" {
         getChar()
@@ -145,6 +174,8 @@ func scan() -> String {
         scanVal = getName()
     } else if isDigit(look) {
         scanVal = getNum()
+    } else if isOp(look) {
+        scanVal = getOp()
     } else {
         scanVal = String(look)
         getChar()
