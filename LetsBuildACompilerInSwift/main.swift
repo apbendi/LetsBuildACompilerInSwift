@@ -2,6 +2,7 @@ import Foundation
 
 var inputBuffer: String! = readLine()
 var look: Character!
+var token: String!
 
 //Report an error
 func error(message: String) {
@@ -20,6 +21,7 @@ func getChar() {
 
     let i = inputBuffer.startIndex.advancedBy(Static.index)
     guard i != inputBuffer.endIndex else {
+        look = "\n"
         return
     }
 
@@ -86,27 +88,56 @@ func isAddop(c: Character) -> Bool {
 }
 
 //Get an identifier
-func getName() -> Character {
+func getName() -> String {
     guard isAlpha(look) else {
         expected("Name")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let upper = String(look).capitalizedString.characters.first!
-    getChar()
-    return upper
+    var name = ""
+
+    while isAlNum(look) {
+        let upper = String(look).capitalizedString.characters.first!
+        name =  "\(name)\(upper)"
+        getChar()
+    }
+
+    skipWhite()
+    return name
 }
 
 //Get a number
-func getNum() -> Character {
+func getNum() -> String {
     guard isDigit(look) else {
         expected("Integer")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let num = look
-    getChar()
+    var num = ""
+
+    while isDigit(look) {
+        num = "\(num)\(look)"
+        getChar()
+    }
+
+    skipWhite()
     return num
+}
+
+func scan() -> String {
+    let scanVal: String
+
+    if isAlpha(look) {
+        scanVal = getName()
+    } else if isDigit(look) {
+        scanVal = getNum()
+    } else {
+        scanVal = String(look)
+        getChar()
+    }
+
+    skipWhite()
+    return scanVal
 }
 
 //Output a string with a leading tab
@@ -120,3 +151,7 @@ func start() {
 
 // MARK: Main
 start()
+repeat {
+    token = scan()
+    print(token)
+} while token != "\n"
