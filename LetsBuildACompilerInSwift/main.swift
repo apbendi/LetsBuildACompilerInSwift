@@ -80,7 +80,7 @@ func isAlNum(c: Character) -> Bool {
 
 //Recognize whitespace
 func isWhite(c: Character) -> Bool {
-    return " " == c || "\t" == c || "\n" == c
+    return " " == c || "\t" == c
 }
 
 //Skip leading white space
@@ -132,6 +132,12 @@ func getNum() -> String {
     return num
 }
 
+func fin() {
+    if look == "\n" {
+        getChar()
+    }
+}
+
 func scan() -> String {
     let scanVal: String
 
@@ -162,4 +168,8 @@ start()
 repeat {
     token = scan()
     print(token)
+
+    if token == "\n" {
+        fin()
+    }
 } while token != "."
