@@ -1,6 +1,15 @@
 import Foundation
 
-var inputBuffer: String! = readLine()
+var line: String! = readLine()
+var inputBuffer = ""
+
+while line.characters.first != "." {
+    inputBuffer.appendContentsOf("\(line)\n")
+    line = readLine()
+}
+
+inputBuffer.appendContentsOf(".")
+
 var look: Character!
 var token: String!
 
@@ -21,7 +30,6 @@ func getChar() {
 
     let i = inputBuffer.startIndex.advancedBy(Static.index)
     guard i != inputBuffer.endIndex else {
-        look = "\n"
         return
     }
 
@@ -72,7 +80,7 @@ func isAlNum(c: Character) -> Bool {
 
 //Recognize whitespace
 func isWhite(c: Character) -> Bool {
-    return " " == c || "\t" == c
+    return " " == c || "\t" == c || "\n" == c
 }
 
 //Skip leading white space
@@ -154,4 +162,4 @@ start()
 repeat {
     token = scan()
     print(token)
-} while token != "\n"
+} while token != "."
