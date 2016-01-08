@@ -126,8 +126,42 @@ func epilog() {
     emit("// END COMPILER OUTPUT")
 }
 
-func declarations() {
+func labels() {
+    match("l")
+}
 
+func constants() {
+    match("c")
+}
+
+func types() {
+    match("t")
+}
+
+func variables() {
+    match("v")
+}
+
+func doProcedure() {
+    match("p")
+}
+
+func doFunction() {
+    match("f")
+}
+
+func declarations() {
+    while ["l", "c", "t", "v", "p", "f"].contains(String(look)) {
+        switch look {
+        case "l": labels()
+        case "c": constants()
+        case "t": types()
+        case "v": variables()
+        case "p": doProcedure()
+        case "f": doFunction()
+        default: break
+        }
+    }
 }
 
 func postLabel(l: Character) {
