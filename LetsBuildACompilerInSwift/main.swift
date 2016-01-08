@@ -126,8 +126,22 @@ func epilog() {
     emit("// END COMPILER OUTPUT")
 }
 
-func doBlock(c: Character) {
+func declarations() {
 
+}
+
+func postLabel(l: Character) {
+    emit("// \(l):")
+}
+
+func statements() {
+    
+}
+
+func doBlock(name: Character) {
+    declarations()
+    postLabel(name)
+    statements()
 }
 
 func prog() {
