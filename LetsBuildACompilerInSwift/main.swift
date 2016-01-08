@@ -118,5 +118,26 @@ func start() {
     getChar()
 }
 
-// MARK: Main
+func prolog() {
+    emit("// COMPILER OUTPUT")
+}
+
+func epilog() {
+    emit("// END COMPILER OUTPUT")
+}
+
+func doBlock(c: Character) {
+
+}
+
+func prog() {
+    match("p")
+    let name = getName()
+    prolog()
+    doBlock(name)
+    match(".")
+    epilog()
+}
+
 start()
+prog()
