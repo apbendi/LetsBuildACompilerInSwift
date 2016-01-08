@@ -169,7 +169,11 @@ func postLabel(l: Character) {
 }
 
 func statements() {
-    
+    match("b")
+    while look != "e" {
+        getChar()
+    }
+    match("e")
 }
 
 func doBlock(name: Character) {
