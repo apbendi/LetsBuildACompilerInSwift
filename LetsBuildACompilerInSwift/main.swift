@@ -121,6 +121,10 @@ func alloc(n: Character) {
 func decl() {
     match("v")
     alloc(getName())
+    while look == "," {
+        getChar()
+        alloc(getName())
+    }
 }
 
 func topDecls() {
