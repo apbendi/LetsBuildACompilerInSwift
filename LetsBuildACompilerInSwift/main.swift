@@ -110,12 +110,21 @@ func getNum() -> Character {
 }
 
 //Output a string with a leading tab
-func emit(s: String) {
-    print("\t\(s)")
+func emit(s: String, newline: Bool = true) {
+
+    let terminator = newline ? "\n" : ""
+    print("\t\(s)", terminator: terminator)
 }
 
 func alloc(n: Character) {
-    emit("variables[\"\(n)\"] = 0")
+    emit("variables[\"\(n)\"] = ", newline: false)
+
+    if look == "=" {
+        match("=")
+        emit(String(getNum()))
+    } else {
+        emit("0")
+    }
 }
 
 func decl() {
