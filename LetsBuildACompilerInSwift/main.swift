@@ -114,9 +114,13 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func alloc(n: Character) {
+    emit("variables[\"\(n)\"] = 0")
+}
+
 func decl() {
     match("v")
-    getChar()
+    alloc(getName())
 }
 
 func topDecls() {
@@ -138,15 +142,16 @@ func main() {
 }
 
 func epilog() {
-    emit("// END COMPILER OUTPU")
+    emit("// END COMPILER OUTPUt")
 }
 
 func prolog() {
-    emit("// COMPILER OUTPUT")
+
 }
 
 func header() {
-    emit("// TINY IN SWIFT")
+    emit("// COMPILER OUTPUT")
+    emit("var variables: [String : Int]()")
 }
 
 func prog() {
