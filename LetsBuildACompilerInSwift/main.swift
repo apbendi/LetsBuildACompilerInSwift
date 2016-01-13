@@ -139,6 +139,16 @@ func emit(s: String, newline: Bool = true, leadtab: Bool = true) {
     print("\(lead)\(s)", terminator: terminator)
 }
 
+func assignment() {
+    getChar()
+}
+
+func block() {
+    while look != "e" {
+        assignment()
+    }
+}
+
 func alloc(n: Character) {
     if inTable(n) {
         fail("Duplicate Variable Name: \(n)")
@@ -186,6 +196,7 @@ func topDecls() {
 func main() {
     match("b")
     prolog()
+    block()
     match("e")
     epilog()
 }
