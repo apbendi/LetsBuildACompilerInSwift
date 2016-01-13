@@ -20,6 +20,10 @@ func fail(message: String) {
     exit(-1)
 }
 
+func undefined(n: Character) {
+    fail("Undefined Identifier: \(n)")
+}
+
 //Read new character from input stream
 func getChar() {
     struct Static { static var index = 0 }
@@ -139,6 +143,60 @@ func emit(s: String, newline: Bool = true, leadtab: Bool = true) {
     print("\(lead)\(s)", terminator: terminator)
 }
 
+// ## CODE GENERATION ROUTINES ##
+
+func clear() {
+    emit("d0 = 0")
+}
+
+func negate() {
+    emit("d0 = -d0")
+}
+
+func loadConst(n: Int) {
+    emit("d0 = \(n)")
+}
+
+func loadVar(n: Character) {
+    if !inTable(n) {
+        undefined(n)
+    }
+
+    emit("d0 = variables[\"\(n)\"]")
+}
+
+func push() {
+    emit("stack.appened(d0)")
+}
+
+func popAdd() {
+    emit("d0 += stack.removeLast()")
+}
+
+func popSub() {
+    emit("d0 -= stack.removeLast()")
+    emit("d0 = -d0")
+}
+
+func popMul() {
+    emit("d0 *= stack.removeLast()")
+}
+
+func popDiv() {
+    emit("d1 = stack.removeLast()")
+    emit("d0 = d1 / d0")
+}
+
+func store(name: Character) {
+    if !inTable(name) {
+        undefined(name)
+    }
+
+    emit("variables[\"\(name)\"] = d0")
+}
+
+// ## END CODE GENERATION
+
 func assignment() {
     getChar()
 }
@@ -211,6 +269,9 @@ func prolog() {
 
 func header() {
     emit("// COMPILER OUTPUT")
+    emit("var d0: Int")
+    emit("var d1: Int")
+    emit("var stack = [Int]()")
     emit("var variables = [String : Int]()")
 }
 
