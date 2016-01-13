@@ -3,6 +3,12 @@ import Foundation
 var inputBuffer: String! = readLine()
 var look: Character!
 
+var symTable = [String : String]()
+for c in "abcdefghijklmnopqrstuvwxyz".uppercaseString.characters {
+    let s = String(c)
+    symTable[s] = ""
+}
+
 //Report an error
 func error(message: String) {
     print("Error: \(message)")
@@ -85,6 +91,16 @@ func isAddop(c: Character) -> Bool {
     return "+" == c || "-" == c
 }
 
+func inTable(c: Character) -> Bool {
+    let s = String(c)
+
+    if let symVal = symTable[s] where symVal == "" {
+        return false
+    } else {
+        return true
+    }
+}
+
 //Get an identifier
 func getName() -> Character {
     guard isAlpha(look) else {
@@ -124,6 +140,13 @@ func emit(s: String, newline: Bool = true, leadtab: Bool = true) {
 }
 
 func alloc(n: Character) {
+    if inTable(n) {
+        fail("Duplicate Variable Name: \(n)")
+    }
+
+    let s = String(n)
+    symTable[s] = "v"
+
     emit("variables[\"\(n)\"] = ", newline: false)
 
     if look == "=" {
