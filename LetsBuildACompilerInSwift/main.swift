@@ -114,9 +114,36 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func main() {
+    match("b")
+    prolog()
+    match("e")
+    epilog()
+}
+
+func epilog() {
+    emit("// END COMPILER OUTPU")
+}
+
+func prolog() {
+    emit("// COMPILER OUTPUT")
+}
+
+func header() {
+    emit("// TINY IN SWIFT")
+}
+
+func prog() {
+    match("p")
+    header()
+    main()
+    match(".")
+}
+
 func start() {
     getChar()
 }
 
 // MARK: Main
 start()
+prog()
