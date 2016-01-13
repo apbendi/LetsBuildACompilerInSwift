@@ -115,10 +115,12 @@ func getNum() -> String {
 }
 
 //Output a string with a leading tab
-func emit(s: String, newline: Bool = true) {
+func emit(s: String, newline: Bool = true, leadtab: Bool = true) {
 
     let terminator = newline ? "\n" : ""
-    print("\t\(s)", terminator: terminator)
+    let lead = leadtab ? "\t" : ""
+
+    print("\(lead)\(s)", terminator: terminator)
 }
 
 func alloc(n: Character) {
@@ -126,9 +128,15 @@ func alloc(n: Character) {
 
     if look == "=" {
         match("=")
-        emit(String(getNum()))
+
+        if look == "-" {
+            emit("-", newline: false, leadtab: false)
+            match("-")
+        }
+
+        emit(String(getNum()), leadtab: false)
     } else {
-        emit("0")
+        emit("0", leadtab: false)
     }
 }
 
@@ -160,7 +168,7 @@ func main() {
 }
 
 func epilog() {
-    emit("// END COMPILER OUTPUt")
+    emit("// END COMPILER OUTPUT")
 }
 
 func prolog() {
