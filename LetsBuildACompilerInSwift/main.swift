@@ -98,15 +98,20 @@ func getName() -> Character {
 }
 
 //Get a number
-func getNum() -> Character {
+func getNum() -> String {
     guard isDigit(look) else {
         expected("Integer")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let num = look
-    getChar()
-    return num
+    var value = ""
+
+    while isDigit(look) {
+        value = "\(value)\(look)"
+        getChar()
+    }
+
+    return value
 }
 
 //Output a string with a leading tab
@@ -164,7 +169,7 @@ func prolog() {
 
 func header() {
     emit("// COMPILER OUTPUT")
-    emit("var variables: [String : Int]()")
+    emit("var variables = [String : Int]()")
 }
 
 func prog() {
