@@ -114,6 +114,22 @@ func emit(s: String) {
     print("\t\(s)")
 }
 
+func decl() {
+    match("v")
+    getChar()
+}
+
+func topDecls() {
+    while look != "b" {
+        switch look {
+        case "v":
+            decl()
+        default:
+            fail("Unrecognized keyword '\(look)'")
+        }
+    }
+}
+
 func main() {
     match("b")
     prolog()
@@ -136,6 +152,7 @@ func header() {
 func prog() {
     match("p")
     header()
+    topDecls()
     main()
     match(".")
 }
