@@ -249,10 +249,100 @@ func popCompareSetGreaterOrEqual() {
 
 // ## END CODE GENERATION
 
+func equals() {
+    match("=")
+    expression()
+    popCompareSetEqual()
+}
+
+func notEquals() {
+    match("#")
+    expression()
+    popCompareSetNEqual()
+}
+
+func less() {
+    match("<")
+    expression()
+    popCompareSetLess()
+}
+
+func greater() {
+    match(">")
+    expression()
+    popCompareSetGreater()
+}
+
+func relation() {
+    expression()
+    if isRelop(look) {
+        push()
+        switch look {
+        case "=":
+            equals()
+        case "#":
+            notEquals()
+        case "<":
+            less()
+        case ">":
+            greater()
+        default:
+            break
+        }
+    }
+}
+
+func notFactor() {
+    if look == "!" {
+        match("!")
+        relation()
+        notIt()
+    } else {
+        relation()
+    }
+}
+
+func boolTerm() {
+    notFactor()
+    while look == "&" {
+        push()
+        match("&")
+        notFactor()
+        popAnd()
+    }
+}
+
+func boolOr() {
+    match("|")
+    boolTerm()
+    popOr()
+}
+
+func boolXor() {
+    match("~")
+    boolTerm()
+    popXor()
+}
+
+func boolExpression() {
+    boolTerm()
+    while isOrop(look) {
+        push()
+        switch look {
+        case "|":
+            boolOr()
+        case "~":
+            boolXor()
+        default:
+            break
+        }
+    }
+}
+
 func factor() {
     if look == "(" {
         match("(")
-        expression()
+        boolExpression()
         match(")")
     } else if isAlpha(look) {
         loadVar(getName())
@@ -350,7 +440,7 @@ func expression() {
 func assignment() {
     let name = getName()
     match("=")
-    expression()
+    boolExpression()
     store(name)
 }
 
