@@ -1,6 +1,15 @@
 import Foundation
 
-var inputBuffer: String! = readLine()
+var line: String! = readLine()
+var inputBuffer = ""
+
+while line.characters.first != "." {
+    inputBuffer.appendContentsOf("\(line)\n")
+    line = readLine()
+}
+
+inputBuffer.append(Character("."))
+
 var look: Character!
 
 var symTable = [String : String]()
@@ -44,6 +53,8 @@ func expected(thing: String) {
 
 // Match a specific input character
 func match(c: Character) {
+    newLine()
+
     if look == c {
         getChar()
         skipWhite()
@@ -91,6 +102,13 @@ func skipWhite() {
     }
 }
 
+func newLine() {
+    while look == "\n" {
+        getChar()
+        skipWhite()
+    }
+}
+
 //Recognize an Addop
 func isAddop(c: Character) -> Bool {
     return "+" == c || "-" == c
@@ -120,6 +138,8 @@ func inTable(c: Character) -> Bool {
 
 //Get an identifier
 func getName() -> Character {
+    newLine()
+
     guard isAlpha(look) else {
         expected("Name")
         exit(-1) // won't actually run but we have to make the compiler happy
@@ -133,6 +153,8 @@ func getName() -> Character {
 
 //Get a number
 func getNum() -> String {
+    newLine()
+
     guard isDigit(look) else {
         expected("Integer")
         exit(-1) // won't actually run but we have to make the compiler happy
@@ -472,6 +494,8 @@ func assignment() {
 }
 
 func block() {
+    newLine()
+
     while look != "e" && look != "l" {
         switch look {
         case "i":
@@ -481,6 +505,7 @@ func block() {
         default:
             assignment()
         }
+        block()
     }
 }
 
@@ -518,6 +543,8 @@ func decl() {
 }
 
 func topDecls() {
+    newLine()
+
     while look != "b" {
         switch look {
         case "v":
@@ -525,6 +552,7 @@ func topDecls() {
         default:
             fail("Unrecognized keyword '\(look)'")
         }
+        newLine()
     }
 }
 
@@ -545,6 +573,7 @@ func prolog() {
 }
 
 func header() {
+    newLine()
     emit("// COMPILER OUTPUT")
     emit("var d0: Int")
     emit("var d1: Int")
