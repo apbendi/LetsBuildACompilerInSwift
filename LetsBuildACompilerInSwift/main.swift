@@ -95,6 +95,10 @@ func isAddop(c: Character) -> Bool {
     return "+" == c || "-" == c
 }
 
+func isMulop(c: Character) -> Bool {
+    return "*" == c || "/" == c
+}
+
 func inTable(c: Character) -> Bool {
     let s = String(c)
 
@@ -153,7 +157,7 @@ func negate() {
     emit("d0 = -d0")
 }
 
-func loadConst(n: Int) {
+func loadConst(n: String) {
     emit("d0 = \(n)")
 }
 
@@ -162,11 +166,11 @@ func loadVar(n: Character) {
         undefined(n)
     }
 
-    emit("d0 = variables[\"\(n)\"]")
+    emit("d0 = variables[\"\(n)\"]!")
 }
 
 func push() {
-    emit("stack.appened(d0)")
+    emit("stack.append(d0)")
 }
 
 func popAdd() {
@@ -197,8 +201,109 @@ func store(name: Character) {
 
 // ## END CODE GENERATION
 
+func factor() {
+    if look == "(" {
+        match("(")
+        expression()
+        match(")")
+    } else if isAlpha(look) {
+        loadVar(getName())
+    } else {
+        loadConst(getNum())
+    }
+}
+
+func negFactor() {
+    match("-")
+    if isDigit(look) {
+        loadConst(getNum())
+    } else {
+        factor()
+    }
+
+    negate()
+}
+
+func firstFactor() {
+    switch look {
+    case "+":
+        match("+")
+        factor()
+    case "-":
+        negFactor()
+    default:
+        factor()
+    }
+}
+
+func multiply() {
+    match("*")
+    factor()
+    popMul()
+}
+
+func divide() {
+    match("/")
+    factor()
+    popDiv()
+}
+
+func term1() {
+    while isMulop(look) {
+        push()
+        switch look {
+        case "*":
+            multiply()
+        case "/":
+            divide()
+        default:
+            break
+        }
+    }
+}
+
+func term() {
+    factor()
+    term1()
+}
+
+func firstTerm() {
+    firstFactor()
+    term1()
+}
+
+func add() {
+    match("+")
+    term()
+    popAdd()
+}
+
+func subtract() {
+    match("-")
+    term()
+    popSub()
+}
+
+func expression() {
+    firstTerm()
+    while isAddop(look) {
+        push()
+        switch look {
+        case "+":
+            add()
+        case "-":
+            subtract()
+        default:
+            break
+        }
+    }
+}
+
 func assignment() {
-    getChar()
+    let name = getName()
+    match("=")
+    expression()
+    store(name)
 }
 
 func block() {
