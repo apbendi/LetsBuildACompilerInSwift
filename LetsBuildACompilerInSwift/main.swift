@@ -263,6 +263,16 @@ func doIf() {
     emit("}")
 }
 
+func doWhile() {
+    match("w")
+    emit("while true {")
+    boolExpression()
+    emit("if d0 == 0 { break }")
+    block()
+    match("e")
+    emit("}")
+}
+
 func equals() {
     match("=")
     expression()
@@ -463,6 +473,8 @@ func block() {
         switch look {
         case "i":
             doIf()
+        case "w":
+            doWhile()
         default:
             assignment()
         }
