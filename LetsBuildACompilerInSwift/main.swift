@@ -46,6 +46,7 @@ func expected(thing: String) {
 func match(c: Character) {
     if look == c {
         getChar()
+        skipWhite()
     } else {
         expected("'\(c)'")
     }
@@ -126,6 +127,7 @@ func getName() -> Character {
 
     let upper = String(look).capitalizedString.characters.first!
     getChar()
+    skipWhite()
     return upper
 }
 
@@ -143,6 +145,7 @@ func getNum() -> String {
         getChar()
     }
 
+    skipWhite()
     return value
 }
 
