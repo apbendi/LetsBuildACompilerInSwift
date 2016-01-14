@@ -99,6 +99,14 @@ func isMulop(c: Character) -> Bool {
     return "*" == c || "/" == c
 }
 
+func isOrop(c: Character) -> Bool {
+    return "|" == c || "~" == c
+}
+
+func isRelop(c: Character) -> Bool {
+    return "=" == c || "#" == c || "<" == c || ">" == c
+}
+
 func inTable(c: Character) -> Bool {
     let s = String(c)
 
@@ -197,6 +205,46 @@ func store(name: Character) {
     }
 
     emit("variables[\"\(name)\"] = d0")
+}
+
+func notIt() {
+    emit("d0 = !d0")
+}
+
+func popAnd() {
+    emit("d0 = d0 != 0 && stack.removeLast() != 0 ? -1 : 0")
+}
+
+func popOr() {
+    emit("d0 = d0 != 0 || stack.removeLast() != 0 ? -1 : 0")
+}
+
+func popXor() {
+    emit("d0 = d0 != stack.removeLast() ? -1 : 0")
+}
+
+func popCompareSetEqual() {
+     emit("d0 = d0 == stack.removeLast() ? -1 : 0")
+}
+
+func popCompareSetNEqual() {
+    emit("d0 = d0 != stack.removeLast() ? -1 : 0")
+}
+
+func popCompareSetGreater() {
+    emit("d0 = stack.removeLast() > d0 ? -1 : 0")
+}
+
+func popCompareSetLess() {
+    emit("d0 = stack.removeLast() < d0 ? -1 : 0")
+}
+
+func popCompareSetLessOrEqual() {
+    emit("d0 = stack.removeLast() <= d0 ? -1 : 0")
+}
+
+func popCompareSetGreaterOrEqual() {
+    emit("d0 = stack.removeLast() >= d0 ? -1 : 0")
 }
 
 // ## END CODE GENERATION
