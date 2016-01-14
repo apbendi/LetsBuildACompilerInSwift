@@ -249,6 +249,20 @@ func popCompareSetGreaterOrEqual() {
 
 // ## END CODE GENERATION
 
+func doIf() {
+    match("i")
+    boolExpression()
+    emit("if d0 != 0 {")
+    block()
+    if look == "l" {
+        match("l")
+        emit("} else {")
+        block()
+    }
+    match("e")
+    emit("}")
+}
+
 func equals() {
     match("=")
     expression()
@@ -445,8 +459,13 @@ func assignment() {
 }
 
 func block() {
-    while look != "e" {
-        assignment()
+    while look != "e" && look != "l" {
+        switch look {
+        case "i":
+            doIf()
+        default:
+            assignment()
+        }
     }
 }
 
