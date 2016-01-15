@@ -11,6 +11,13 @@ while line.characters.first != "." {
 inputBuffer.append(Character("."))
 
 var look: Character!
+var token: Character!
+var value: String!
+
+let kwList = ["IF", "ELSE", "ENDIF", "WHILE", "ENDWHILE",
+                "VAR", "BEGIN", "END", "PROGRAM"]
+
+let kwCode = "xilewevbep"
 
 var symTable = [String : String]()
 for c in "abcdefghijklmnopqrstuvwxyz".uppercaseString.characters {
@@ -169,6 +176,26 @@ func getNum() -> String {
 
     skipWhite()
     return value
+}
+
+func lookup(s: String) -> Int {
+    if let index = kwList.indexOf(s) {
+        return index
+    } else {
+        return -1;
+    }
+}
+
+func scan() {
+    getName()
+    let index = kwCode.startIndex.advancedBy(lookup(value))
+    token = kwCode[index]
+}
+
+func matchString(x: String) {
+    if value == x {
+        expected("\"\(x)\"")
+    }
 }
 
 //Output a string with a leading tab
