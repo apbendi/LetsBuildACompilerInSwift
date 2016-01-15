@@ -144,7 +144,7 @@ func inTable(c: Character) -> Bool {
 }
 
 //Get an identifier
-func getName() -> Character {
+func getName() {
     newLine()
 
     guard isAlpha(look) else {
@@ -152,10 +152,15 @@ func getName() -> Character {
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
-    let upper = String(look).capitalizedString.characters.first!
-    getChar()
+    var localValue = ""
+
+    while isAlNum(look) {
+        localValue = "\(localValue)\(look)"
+        getChar()
+    }
+
+    value = localValue.capitalizedString
     skipWhite()
-    return upper
 }
 
 //Get a number
@@ -421,7 +426,8 @@ func factor() {
         boolExpression()
         match(")")
     } else if isAlpha(look) {
-        loadVar(getName())
+        getName()
+        loadVar(value.characters.first!)
     } else {
         loadConst(getNum())
     }
@@ -514,7 +520,7 @@ func expression() {
 }
 
 func assignment() {
-    let name = getName()
+    let name = value.characters.first!
     match("=")
     boolExpression()
     store(name)
@@ -561,11 +567,13 @@ func alloc(n: Character) {
 }
 
 func decl() {
-    match("v")
-    alloc(getName())
+    //match("v")
+    getName()
+    alloc(value.characters.first!)
     while look == "," {
-        getChar()
-        alloc(getName())
+        match(",")
+        getName()
+        alloc(value.characters.first!)
     }
 }
 
