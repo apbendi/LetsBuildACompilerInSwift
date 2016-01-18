@@ -14,7 +14,7 @@ var look: Character!
 var token: Character!
 var value: String!
 
-let kwList = ["IF", "ELSE", "ENDIF", "WHILE", "ENDWHILE",
+let kwList = ["X", "IF", "ELSE", "ENDIF", "WHILE", "ENDWHILE",
                 "VAR", "BEGIN", "END", "PROGRAM"]
 
 let kwCode = "xilewevbep"
@@ -159,7 +159,7 @@ func getName() {
         getChar()
     }
 
-    value = localValue.capitalizedString
+    value = localValue.uppercaseString
     skipWhite()
 }
 
@@ -187,7 +187,7 @@ func lookup(s: String) -> Int {
     if let index = kwList.indexOf(s) {
         return index
     } else {
-        return -1;
+        return 0;
     }
 }
 
@@ -198,7 +198,7 @@ func scan() {
 }
 
 func matchString(x: String) {
-    if value == x {
+    if value != x {
         expected("\"\(x)\"")
     }
 }
@@ -307,26 +307,26 @@ func popCompareSetGreaterOrEqual() {
 // ## END CODE GENERATION
 
 func doIf() {
-    match("i")
+    //matchString("IF")
     boolExpression()
     emit("if d0 != 0 {")
     block()
-    if look == "l" {
-        match("l")
+    if token == "l" {
+        //matchString("ELSE")
         emit("} else {")
         block()
     }
-    match("e")
+    matchString("ENDIF")
     emit("}")
 }
 
 func doWhile() {
-    match("w")
+    //matchString("WHILE")
     emit("while true {")
     boolExpression()
     emit("if d0 == 0 { break }")
     block()
-    match("e")
+    matchString("ENDWHILE")
     emit("}")
 }
 
@@ -527,10 +527,11 @@ func assignment() {
 }
 
 func block() {
-    newLine()
+    //newLine()
+    scan()
 
-    while look != "e" && look != "l" {
-        switch look {
+    while token != "e" && token != "l" {
+        switch token {
         case "i":
             doIf()
         case "w":
@@ -538,7 +539,8 @@ func block() {
         default:
             assignment()
         }
-        block()
+        //block()
+        scan()
     }
 }
 
@@ -578,24 +580,26 @@ func decl() {
 }
 
 func topDecls() {
-    newLine()
+    //newLine()
+    scan()
 
-    while look != "b" {
-        switch look {
+    while token != "b" {
+        switch token {
         case "v":
             decl()
         default:
             fail("Unrecognized keyword '\(look)'")
         }
-        newLine()
+        //newLine()
+        scan()
     }
 }
 
 func main() {
-    match("b")
+    matchString("BEGIN")
     prolog()
     block()
-    match("e")
+    matchString("END")
     epilog()
 }
 
@@ -617,7 +621,7 @@ func header() {
 }
 
 func prog() {
-    match("p")
+    matchString("PROGRAM")
     header()
     topDecls()
     main()
@@ -626,6 +630,7 @@ func prog() {
 
 func start() {
     getChar()
+    scan()
 }
 
 // MARK: Main
