@@ -1,5 +1,7 @@
 import Foundation
 
+typealias Symbol = String
+
 var line: String! = readLine()
 var inputBuffer = ""
 
@@ -19,11 +21,7 @@ let kwList = ["X", "IF", "ELSE", "ENDIF", "WHILE", "ENDWHILE",
 
 let kwCode = "xilewevbep"
 
-var symTable = [String : String]()
-for c in "abcdefghijklmnopqrstuvwxyz".uppercaseString.characters {
-    let s = String(c)
-    symTable[s] = ""
-}
+var symTable = [Symbol : String]()
 
 //Report an error
 func error(message: String) {
@@ -36,7 +34,7 @@ func fail(message: String) {
     exit(-1)
 }
 
-func undefined(n: Character) {
+func undefined(n: Symbol) {
     fail("Undefined Identifier: \(n)")
 }
 
@@ -133,13 +131,11 @@ func isRelop(c: Character) -> Bool {
     return "=" == c || "#" == c || "<" == c || ">" == c
 }
 
-func inTable(c: Character) -> Bool {
-    let s = String(c)
-
-    if let symVal = symTable[s] where symVal == "" {
-        return false
-    } else {
+func inTable(n: Symbol) -> Bool {
+    if let symVal = symTable[n] {
         return true
+    } else {
+        return false
     }
 }
 
@@ -226,7 +222,7 @@ func loadConst(n: String) {
     emit("d0 = \(n)")
 }
 
-func loadVar(n: Character) {
+func loadVar(n: Symbol) {
     if !inTable(n) {
         undefined(n)
     }
@@ -256,7 +252,7 @@ func popDiv() {
     emit("d0 = d1 / d0")
 }
 
-func store(name: Character) {
+func store(name: Symbol) {
     if !inTable(name) {
         undefined(name)
     }
@@ -427,7 +423,7 @@ func factor() {
         match(")")
     } else if isAlpha(look) {
         getName()
-        loadVar(value.characters.first!)
+        loadVar(value)
     } else {
         loadConst(getNum())
     }
@@ -520,7 +516,7 @@ func expression() {
 }
 
 func assignment() {
-    let name = value.characters.first!
+    let name = value
     match("=")
     boolExpression()
     store(name)
@@ -544,7 +540,15 @@ func block() {
     }
 }
 
-func alloc(n: Character) {
+func addEntry(n: Symbol, t: Character) {
+    if inTable(n) {
+        fail("Duplicate Identifier: \(n)")
+    }
+
+    symTable[n] = String(t)
+}
+
+func alloc(n: Symbol) {
     if inTable(n) {
         fail("Duplicate Variable Name: \(n)")
     }
@@ -571,11 +575,11 @@ func alloc(n: Character) {
 func decl() {
     //match("v")
     getName()
-    alloc(value.characters.first!)
+    alloc(value)
     while look == "," {
         match(",")
         getName()
-        alloc(value.characters.first!)
+        alloc(value)
     }
 }
 
