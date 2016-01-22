@@ -333,21 +333,41 @@ func equals() {
 }
 
 func notEquals() {
-    match("#")
+    match(">")
     expression()
     popCompareSetNEqual()
 }
 
+func lessOrEqual() {
+    match("=")
+    expression()
+    popCompareSetLessOrEqual()
+}
+
 func less() {
     match("<")
-    expression()
-    popCompareSetLess()
+    switch look {
+    case "=":
+        lessOrEqual()
+    case ">":
+        notEquals()
+    default:
+        expression()
+        popCompareSetLess()
+    }
 }
 
 func greater() {
     match(">")
-    expression()
-    popCompareSetGreater()
+
+    if look == "=" {
+        match("=")
+        expression()
+        popCompareSetGreaterOrEqual()
+    } else {
+        expression()
+        popCompareSetGreater()
+    }
 }
 
 func relation() {
