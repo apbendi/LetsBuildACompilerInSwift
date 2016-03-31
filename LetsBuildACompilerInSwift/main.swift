@@ -17,9 +17,9 @@ var token: Character!
 var value: String!
 
 let kwList = ["X", "IF", "ELSE", "ENDIF", "WHILE", "ENDWHILE",
-                "VAR", "BEGIN", "END", "PROGRAM"]
+                "READ", "WRITE", "VAR", "BEGIN", "END", "PROGRAM"]
 
-let kwCode = "xilewevbep"
+let kwCode = "xileweRWvbep"
 
 var symTable = [Symbol : String]()
 
@@ -132,7 +132,7 @@ func isRelop(c: Character) -> Bool {
 }
 
 func inTable(n: Symbol) -> Bool {
-    if let symVal = symTable[n] {
+    if let _ = symTable[n] {
         return true
     } else {
         return false
@@ -300,7 +300,48 @@ func popCompareSetGreaterOrEqual() {
     emit("d0 = stack.removeLast() >= d0 ? -1 : 0")
 }
 
+func readVar() {
+    emit("if let inputString = readLine(),")
+    emit("let inputValue = Int(inputString) {")
+    emit("d0 = inputValue")
+    emit("} else {")
+    emit("d0 = 0 }")
+    store(value)
+}
+
+func writeVar() {
+    emit("print(d0)")
+}
+
 // ## END CODE GENERATION
+
+func doRead() {
+    match("(")
+    getName()
+    readVar()
+
+    while look == "," {
+        match(",")
+        getName()
+        readVar()
+    }
+
+    match(")")
+}
+
+func doWrite() {
+    match("(")
+    expression()
+    writeVar()
+
+    while look == "," {
+        match(",")
+        expression()
+        writeVar()
+    }
+
+    match(")")
+}
 
 func doIf() {
     //matchString("IF")
@@ -552,6 +593,10 @@ func block() {
             doIf()
         case "w":
             doWhile()
+        case "R":
+            doRead()
+        case "W":
+            doWrite()
         default:
             assignment()
         }
