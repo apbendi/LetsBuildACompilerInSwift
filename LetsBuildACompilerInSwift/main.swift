@@ -56,18 +56,6 @@ func expected(thing: String) {
     fail("Expected \(thing)")
 }
 
-// Match a specific input character
-func match(c: Character) {
-    newLine()
-
-    if look == c {
-        getChar()
-        skipWhite()
-    } else {
-        expected("'\(c)'")
-    }
-}
-
 //Recognize an Alpha character
 func isAlpha(c: Character) -> Bool {
     switch c {
@@ -97,7 +85,7 @@ func isAlNum(c: Character) -> Bool {
 
 //Recognize whitespace
 func isWhite(c: Character) -> Bool {
-    return " " == c || "\t" == c
+    return " " == c || "\t" == c || "\n" == c
 }
 
 //Skip leading white space
@@ -107,12 +95,12 @@ func skipWhite() {
     }
 }
 
-func newLine() {
-    while look == "\n" {
-        getChar()
-        skipWhite()
-    }
-}
+//func newLine() {
+//    while look == "\n" {
+//        getChar()
+//        skipWhite()
+//    }
+//}
 
 //Recognize an Addop
 func isAddop(c: Character) -> Bool {
@@ -139,12 +127,12 @@ func inTable(n: Symbol) -> Bool {
     }
 }
 
-//Get an identifier
+//  Get an identifier
 func getName() {
-    newLine()
+    skipWhite()
 
     guard isAlpha(look) else {
-        expected("Name")
+        expected("Identifier")
         exit(-1) // won't actually run but we have to make the compiler happy
     }
 
@@ -155,28 +143,49 @@ func getName() {
         getChar()
     }
 
+    token = "x"
     value = localValue.uppercaseString
-    skipWhite()
 }
 
-//Get a number
-func getNum() -> String {
-    newLine()
+//  Get a number
+func getNum()  {
+    skipWhite()
 
     guard isDigit(look) else {
-        expected("Integer")
-        exit(-1) // won't actually run but we have to make the compiler happy
+        expected("Number")
+        exit(-1)
     }
 
-    var value = ""
+    var localValue = ""
 
     while isDigit(look) {
-        value = "\(value)\(look)"
+        localValue = "\(localValue)\(look)"
         getChar()
     }
 
+    token = "#"
+    value = localValue.uppercaseString
+}
+
+// Get an Operator
+func getOp() {
     skipWhite()
-    return value
+    token = look
+    value = "\(look)"
+    getChar()
+}
+
+// Read the ` input and update token
+func next() {
+    skipWhite()
+
+    if isAlpha(look) {
+        getName()
+    } else if isDigit(look) {
+        getNum()
+    } else {
+        getOp()
+    }
 }
 
 func lookup(s: String) -> Int {
@@ -188,15 +197,18 @@ func lookup(s: String) -> Int {
 }
 
 func scan() {
-    getName()
-    let index = kwCode.startIndex.advancedBy(lookup(value))
-    token = kwCode[index]
+    if token == "x" {
+        let index = kwCode.startIndex.advancedBy(lookup(value))
+        token = kwCode[index]
+    }
 }
 
 func matchString(x: String) {
     if value != x {
         expected("\"\(x)\"")
     }
+
+    next()
 }
 
 //Output a string with a leading tab
@@ -316,40 +328,40 @@ func writeVar() {
 // ## END CODE GENERATION
 
 func doRead() {
-    match("(")
-    getName()
+    next()
+    matchString("(")
     readVar()
 
-    while look == "," {
-        match(",")
-        getName()
+    while token == "," {
+        next()
         readVar()
     }
 
-    match(")")
+    matchString(")")
 }
 
 func doWrite() {
-    match("(")
-    expression()
+    next()
+    matchString("(")
+    `()
     writeVar()
 
-    while look == "," {
-        match(",")
+    while token == "," {
+        next()
         expression()
         writeVar()
     }
 
-    match(")")
+    matchString(")")
 }
 
 func doIf() {
-    //matchString("IF")
+    next()
     boolExpression()
     emit("if d0 != 0 {")
     block()
     if token == "l" {
-        //matchString("ELSE")
+        next()
         emit("} else {")
         block()
     }
@@ -368,26 +380,26 @@ func doWhile() {
 }
 
 func equals() {
-    match("=")
+    next()
     expression()
     popCompareSetEqual()
 }
 
 func notEquals() {
-    match(">")
+    next()
     expression()
     popCompareSetNEqual()
 }
 
 func lessOrEqual() {
-    match("=")
+    next()
     expression()
     popCompareSetLessOrEqual()
 }
 
 func less() {
-    match("<")
-    switch look {
+    next()
+    switch token {
     case "=":
         lessOrEqual()
     case ">":
@@ -399,10 +411,10 @@ func less() {
 }
 
 func greater() {
-    match(">")
+    next()
 
-    if look == "=" {
-        match("=")
+    if token == "=" {
+        next()
         expression()
         popCompareSetGreaterOrEqual()
     } else {
@@ -413,13 +425,11 @@ func greater() {
 
 func relation() {
     expression()
-    if isRelop(look) {
+    if isRelop(token) {
         push()
-        switch look {
+        switch token {
         case "=":
             equals()
-        case "#":
-            notEquals()
         case "<":
             less()
         case ">":
@@ -431,8 +441,8 @@ func relation() {
 }
 
 func notFactor() {
-    if look == "!" {
-        match("!")
+    if token == "!" {
+        next()
         relation()
         notIt()
     } else {
@@ -442,31 +452,31 @@ func notFactor() {
 
 func boolTerm() {
     notFactor()
-    while look == "&" {
+    while token == "&" {
         push()
-        match("&")
+        next()
         notFactor()
         popAnd()
     }
 }
 
 func boolOr() {
-    match("|")
+    next()
     boolTerm()
     popOr()
 }
 
 func boolXor() {
-    match("~")
+    next()
     boolTerm()
     popXor()
 }
 
 func boolExpression() {
     boolTerm()
-    while isOrop(look) {
+    while isOrop(token) {
         push()
-        switch look {
+        switch token {
         case "|":
             boolOr()
         case "~":
@@ -478,22 +488,21 @@ func boolExpression() {
 }
 
 func factor() {
-    if look == "(" {
-        match("(")
+    if token == "(" {
+        next()
         boolExpression()
-        match(")")
-    } else if isAlpha(look) {
-        getName()
+        matchString(")")
+    } else if token == "x" {
         loadVar(value)
-    } else {
-        loadConst(getNum())
+    } else if token == "#" {
+        loadConst(value)
     }
 }
 
 func negFactor() {
-    match("-")
-    if isDigit(look) {
-        loadConst(getNum())
+    next()
+    if isDigit(token) {
+        loadConst(value)
     } else {
         factor()
     }
@@ -502,9 +511,9 @@ func negFactor() {
 }
 
 func firstFactor() {
-    switch look {
+    switch token {
     case "+":
-        match("+")
+        next()
         factor()
     case "-":
         negFactor()
@@ -514,21 +523,21 @@ func firstFactor() {
 }
 
 func multiply() {
-    match("*")
+    next()
     factor()
     popMul()
 }
 
 func divide() {
-    match("/")
+    next()
     factor()
     popDiv()
 }
 
 func term1() {
-    while isMulop(look) {
+    while isMulop(token) {
         push()
-        switch look {
+        switch token {
         case "*":
             multiply()
         case "/":
@@ -550,22 +559,22 @@ func firstTerm() {
 }
 
 func add() {
-    match("+")
+    next()
     term()
     popAdd()
 }
 
 func subtract() {
-    match("-")
+    next()
     term()
     popSub()
 }
 
 func expression() {
     firstTerm()
-    while isAddop(look) {
+    while isAddop(token) {
         push()
-        switch look {
+        switch token {
         case "+":
             add()
         case "-":
@@ -578,13 +587,12 @@ func expression() {
 
 func assignment() {
     let name = value
-    match("=")
+    next()
     boolExpression()
     store(name)
 }
 
 func block() {
-    //newLine()
     scan()
 
     while token != "e" && token != "l" {
@@ -600,7 +608,7 @@ func block() {
         default:
             assignment()
         }
-        //block()
+
         scan()
     }
 }
@@ -623,12 +631,12 @@ func alloc(n: Symbol) {
 
     emit("variables[\"\(n)\"] = ", newline: false)
 
-    if look == "=" {
-        match("=")
+    if token == "=" {
+        next()
 
-        if look == "-" {
+        if token == "-" {
             emit("-", newline: false, leadtab: false)
-            match("-")
+            next()
         }
 
         emit(String(getNum()), leadtab: false)
@@ -641,8 +649,8 @@ func decl() {
     //match("v")
     getName()
     alloc(value)
-    while look == "," {
-        match(",")
+    while token == "," {
+        next()
         getName()
         alloc(value)
     }
@@ -681,7 +689,6 @@ func prolog() {
 }
 
 func header() {
-    newLine()
     emit("// COMPILER OUTPUT")
     emit("var d0: Int")
     emit("var d1: Int")
@@ -694,12 +701,12 @@ func prog() {
     header()
     topDecls()
     main()
-    match(".")
+    matchString(".")
 }
 
 func start() {
     getChar()
-    scan()
+    next()
 }
 
 // MARK: Main
